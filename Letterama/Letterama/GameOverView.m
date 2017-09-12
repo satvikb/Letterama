@@ -39,7 +39,7 @@
     
     newHighScoreLabel = [[UILabel alloc] initWithFrame:[self propToRect:CGRectMake(0.1, 0.4, 0.8, 0.075)]];
     newHighScoreLabel.textAlignment = NSTextAlignmentCenter;
-    newHighScoreLabel.text = newHighScore == true ? @"new high score" : @"";
+    newHighScoreLabel.text = newHighScore == true ? @"new high score!" : @"";
     //    scoreLabel.layer.borderWidth = 3;
     newHighScoreLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:30]];
     newHighScoreLabel.adjustsFontSizeToFitWidth = true;
@@ -70,7 +70,7 @@
 - (CGRect) propToRect: (CGRect)prop {
     CGRect viewSize = self.frame;
     CGRect real = CGRectMake(prop.origin.x*viewSize.size.width, prop.origin.y*viewSize.size.height, prop.size.width*viewSize.size.width, prop.size.height*viewSize.size.height);
-    return real;
+    return CGRectIntegral(real);
 }
 
 @end

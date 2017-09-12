@@ -35,34 +35,75 @@
     timePerWord = 3;
     currentWord = 0;
     words = _words;
-    [self createAllDigitButtons];
     
+   
+    if([Storage getDidCompleteTutorial] == true){
+        [self startGame];
+    }else{
+        UIView* tutorialView = [[UIView alloc] initWithFrame:[self propToRect:CGRectMake(0.2, 0.3, 0.6, 0.4)]];
+        tutorialView.backgroundColor = UIColor.whiteColor;
+        tutorialView.layer.borderWidth = 5;
+        
+        UILabel* mainLabel = [[UILabel alloc] initWithFrame:CGRectIntegral(CGRectMake(tutorialView.frame.size.width*0.05, tutorialView.frame.size.height*0.1, tutorialView.frame.size.width*0.9, tutorialView.frame.size.height*0.7))];
+        mainLabel.text = @"select the number that is equal to the amount of letters each word has";
+        mainLabel.numberOfLines = 3;
+//        mainLabel.layer.borderWidth = 2;
+        mainLabel.textAlignment = NSTextAlignmentCenter;
+        mainLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:20]];
+        mainLabel.adjustsFontSizeToFitWidth = true;
+        
+        [tutorialView addSubview:mainLabel];
+        
+        [self addSubview:tutorialView];
+        
+        [self performSelector:@selector(showTutorialDissapearButton:) withObject:tutorialView afterDelay:3];
+    }
+    
+    return self;
+}
+
+-(void)startGame{
+    [self createScoreLabel];
+    [self createMainWordLabel];
+    [self createTimerBar];
+    [self createNewWord];
+    [self startGameLoop];
+    [self createAllDigitButtons];
+}
+
+-(void)createScoreLabel{
     scoreLabel = [[UILabel alloc] initWithFrame:[self propToRect:CGRectMake(0.05, 0.05, 0.9, 0.1)]];
-//    scoreLabel.layer.borderWidth = 1;
+    //    scoreLabel.layer.borderWidth = 1;
     scoreLabel.textAlignment = NSTextAlignmentCenter;
     scoreLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:30]];
     scoreLabel.adjustsFontSizeToFitWidth = true;
     scoreLabel.text = @"0";
     scoreLabel.tag = 1;
     [self addSubview:scoreLabel];
-    
+}
+
+-(void)createTimerBar {
+    timerBar = [[UIView alloc] initWithFrame:[self propToRect:CGRectMake(0, 0.3125, 1, 0.05)]];
+    timerBar.backgroundColor = UIColor.blackColor;
+    [self addSubview:timerBar];
+}
+
+-(void)createMainWordLabel {
     mainWordLabel = [[UILabel alloc] initWithFrame:[self propToRect:CGRectMake(0.05, 0.15, 0.9, 0.15)]];
     mainWordLabel.layer.borderWidth = [Storage getCurrentBorderWidth];
     mainWordLabel.textAlignment = NSTextAlignmentCenter;
     mainWordLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:60]];
     mainWordLabel.adjustsFontSizeToFitWidth = true;
     [self addSubview:mainWordLabel];
-    
-    
-    timerBar = [[UIView alloc] initWithFrame:[self propToRect:CGRectMake(0, 0.3125, 1, 0.05)]];
-    timerBar.backgroundColor = UIColor.blackColor;
-    [self addSubview:timerBar];
-    
-    [self createNewWord];
+}
 
-    [self startGameLoop];
-    
-    return self;
+-(void)showTutorialDissapearButton:(UIView*)tutorialView {
+    Button* doneBtn = [[Button alloc] initWithFrame:CGRectIntegral(CGRectMake(tutorialView.frame.size.width*0.1, tutorialView.frame.size.height-(tutorialView.frame.size.height*0.2), tutorialView.frame.size.width*0.8, tutorialView.frame.size.height*0.2)) withBlock:^void{
+        [tutorialView removeFromSuperview];
+        [self startGame];
+        [Storage setDidCompleteTutorial];
+    } text:@"done"];
+    [tutorialView addSubview:doneBtn];
 }
 
 -(void)createNewWord{
@@ -71,7 +112,7 @@
     while (string.length <= 0 || string.length > 9) {
         int index = rand() % [words count];
         string = [words objectAtIndex:index];
-        NSLog(@"S %@", string);
+//        NSLog(@"S %@", string);
     }
     
     currentWord = string;
@@ -182,7 +223,7 @@
 - (CGRect) propToRect: (CGRect)prop {
     CGRect viewSize = self.frame;
     CGRect real = CGRectMake(prop.origin.x*viewSize.size.width, prop.origin.y*viewSize.size.height, prop.size.width*viewSize.size.width, prop.size.height*viewSize.size.height);
-    return real;
+    return CGRectIntegral(real);
 }
 
 @end

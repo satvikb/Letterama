@@ -22,7 +22,7 @@
     self.digitId = digitId;
     self.currentDigit = currentDigit;
     
-    self.textLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+    self.textLabel = [[UILabel alloc] initWithFrame:CGRectIntegral(CGRectMake(0, 0, frame.size.width, frame.size.height))];
     self.textLabel.text = [NSString stringWithFormat:@"%i", digitId];
     self.textLabel.textAlignment = NSTextAlignmentCenter;
     self.textLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:50]];

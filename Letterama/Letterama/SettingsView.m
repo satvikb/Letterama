@@ -8,7 +8,7 @@
 
 #import "SettingsView.h"
 
-#define NUMBER_OF_FONTS (3)
+#define NUMBER_OF_FONTS (6)
 #define MAX_BORDER_WIDTH (7)
 
 @implementation SettingsView {
@@ -83,6 +83,6 @@
 - (CGRect) propToRect: (CGRect)prop {
     CGRect viewSize = self.frame;
     CGRect real = CGRectMake(prop.origin.x*viewSize.size.width, prop.origin.y*viewSize.size.height, prop.size.width*viewSize.size.width, prop.size.height*viewSize.size.height);
-    return real;
+    return CGRectIntegral(real);
 }
 @end

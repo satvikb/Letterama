@@ -43,25 +43,26 @@
 
 -(void)addScoreUnitScore:(GKScore*)score withPlayer:(GKPlayer*)player cellSize:(CGSize)cellSize i:(int)i{
     
-    UIView* playerScoreUnit = [[UIView alloc] initWithFrame:CGRectMake(0, cellSize.height*i, cellSize.width, cellSize.height)];
-    UILabel* rankLabel = [[UILabel alloc] initWithFrame:CGRectMake(cellSize.width*0, cellSize.height*0, cellSize.width*0.2, cellSize.height)];
+    UIView* playerScoreUnit = [[UIView alloc] initWithFrame:CGRectIntegral(CGRectMake(0, cellSize.height*i, cellSize.width, cellSize.height))];
+    UILabel* rankLabel = [[UILabel alloc] initWithFrame:CGRectIntegral(CGRectMake(cellSize.width*0, cellSize.height*0, cellSize.width*0.2, cellSize.height))];
     rankLabel.text = [NSString stringWithFormat:@"%li.", (long)score.rank];
     rankLabel.textAlignment = NSTextAlignmentCenter;
     rankLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:20]];
     [playerScoreUnit addSubview:rankLabel];
     
-    UILabel* nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(cellSize.width*0.2, cellSize.height*0, cellSize.width*0.5, cellSize.height)];
+    UILabel* nameLabel = [[UILabel alloc] initWithFrame:CGRectIntegral(CGRectMake(cellSize.width*0.2, cellSize.height*0, cellSize.width*0.5, cellSize.height))];
     nameLabel.text = [NSString stringWithFormat:@"%@", player.alias];
     nameLabel.textAlignment = NSTextAlignmentLeft;
     nameLabel.adjustsFontSizeToFitWidth = true;
     nameLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:20]];
     [playerScoreUnit addSubview:nameLabel];
     
-    UILabel* scoreLabel = [[UILabel alloc] initWithFrame:CGRectMake(cellSize.width*0.7, cellSize.height*0, cellSize.width*0.3, cellSize.height)];
+    UILabel* scoreLabel = [[UILabel alloc] initWithFrame:CGRectIntegral(CGRectMake(cellSize.width*0.7, cellSize.height*0, cellSize.width*0.3, cellSize.height))];
     scoreLabel.text = [NSString stringWithFormat:@"%lli", score.value];
     scoreLabel.textAlignment = NSTextAlignmentCenter;
-    scoreLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:20]];
-    scoreLabel.layer.borderWidth = [Storage getCurrentBorderWidth];
+    scoreLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:40]];
+    scoreLabel.adjustsFontSizeToFitWidth = true;
+//    scoreLabel.layer.borderWidth = [Storage getCurrentBorderWidth];
     [playerScoreUnit addSubview:scoreLabel];
     
     [scroll addSubview:playerScoreUnit];
@@ -70,7 +71,7 @@
 - (CGRect) propToRect: (CGRect)prop {
     CGRect viewSize = self.frame;
     CGRect real = CGRectMake(prop.origin.x*viewSize.size.width, prop.origin.y*viewSize.size.height, prop.size.width*viewSize.size.width, prop.size.height*viewSize.size.height);
-    return real;
+    return CGRectIntegral(real);
 }
 
 @end

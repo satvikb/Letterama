@@ -74,7 +74,13 @@ static NSString* const tutorialId = @"tutorial";
         case 1:
             return @"Helvetica";
         case 2:
-            return @"Ariel";
+            return @"Avenir";
+        case 3:
+            return @"Didot";
+        case 4:
+            return @"GillSans";
+        case 5:
+            return @"Noteworthy";
         default:
             return @"Pixel_3";
             break;

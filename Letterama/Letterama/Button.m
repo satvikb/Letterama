@@ -14,10 +14,10 @@
 @synthesize textLabel;
 
 -(id)initWithFrame:(CGRect)frame withBlock:(ButtonPress)pressDown text:(NSString*)text{
-    self = [super initWithFrame:frame];
+    self = [super initWithFrame:CGRectIntegral(frame)];
     block = pressDown;
     
-    self.textLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+    self.textLabel = [[UILabel alloc] initWithFrame:CGRectIntegral(CGRectMake(0, 0, frame.size.width, frame.size.height))];
     self.textLabel.text = text;
     self.textLabel.textAlignment = NSTextAlignmentCenter;
     self.textLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:30]];

@@ -38,11 +38,15 @@
     // Do any additional setup after loading the view, typically from a nib.
     [self authenticateLocalPlayer];
     
-    NSString *file = [[NSBundle mainBundle] pathForResource:@"words_alpha" ofType:@"txt"];
-    
-    NSString *fileContents = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
-    
-    NSArray *lines = [fileContents componentsSeparatedByString:@"\r\n"];
+    NSString* file = [[NSBundle mainBundle] pathForResource:@"words_alpha" ofType:@"txt"];
+//
+    NSString* fileContents = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
+//    NSString* sub = [fileContents substringToIndex:20];
+//    NSArray* lines3 = [sub componentsSeparatedByString:@"\n"];
+
+//    NSArray* lines2 = [fileContents componentsSeparatedByString:@"\n"];
+//    NSLog(@"WWWW %lu__%@__%lu", (unsigned long)[lines2 count], sub, lines3.count);
+    NSArray* lines = [fileContents componentsSeparatedByString:@"\n"];//@[@"test1", @"test2", @"test3"];
     words = lines;
     
     /* initialize random seed: */
@@ -59,15 +63,20 @@
                        initWithAdSize:kGADAdSizeSmartBannerPortrait];
     self.bannerView.adUnitID = @"ca-app-pub-2889096611002538/5198583224";
     CGRect screenBounds = [self propToRect:CGRectMake(0, 0, 1, 1)];
-    [self.bannerView setFrame:CGRectMake(0, 0, screenBounds.size.width, self.bannerView.bounds.size.height)];
+    [self.bannerView setFrame:CGRectIntegral(CGRectMake(0, 0, screenBounds.size.width, self.bannerView.bounds.size.height))];
     self.bannerView.center = CGPointMake(screenBounds.size.width / 2, screenBounds.size.height - (self.bannerView.bounds.size.height / 2));
     self.bannerView.rootViewController = self;
     self.bannerView.delegate = self;
     self.bannerView.layer.zPosition = 200;
+    self.bannerView.tag = 1;
     GADRequest *request = [GADRequest request];
     request.testDevices = @[ kGADSimulatorID,                       // All simulators
                              @"2e8fb434d98fb223f735071df2de6280"];
     [self.bannerView loadRequest:request];
+    [self setSub:self.bannerView tagsTo:1];
+
+    
+    self.interstitial = [self createAndLoadInterstitial];
     
 }
 
@@ -103,6 +112,7 @@
 -(GameCenterLeaderboardView*)createGameCenterLeaderboardViewWithScores:(NSArray*)scores{
     GameCenterLeaderboardView* leaderboard = [[GameCenterLeaderboardView alloc] initWithFrame:[self propToRect:CGRectMake(0, 0, 1, 1)] scores:scores];
     leaderboard.delegate = self;
+    leaderboard.layer.zPosition = 50;
     return leaderboard;
 }
 
@@ -204,13 +214,22 @@
 
 -(void)changeViews:(UIView*)mainView borderTo:(int)border{
     for(UIView* subview in mainView.subviews){
-        if(subview.tag != 1){
-            subview.layer.borderWidth = border;
-        }else{
+        if(subview.tag == 1){
             subview.layer.borderWidth = 0;
+        }else{
+            subview.layer.borderWidth = border;
         }
-        
         [self changeViews:subview borderTo:border];
+
+    }
+}
+
+-(void)setSub:(UIView*)mainView tagsTo:(int)tag{
+    mainView.tag = tag;
+    for(UIView* subview in mainView.subviews){
+        subview.tag = tag;
+        
+        [self setSub:subview tagsTo:tag];
     }
 }
 
@@ -291,6 +310,7 @@
 - (GADInterstitial *)createAndLoadInterstitial {
     GADInterstitial *interstitial = [[GADInterstitial alloc] initWithAdUnitID:@"ca-app-pub-2889096611002538/8183128773"];
     interstitial.delegate = self;
+//    interstitial.
     GADRequest *interstitialRequest = [GADRequest request];
     interstitialRequest.testDevices = @[ kGADSimulatorID,                       // All simulators
                                          @"2e8fb434d98fb223f735071df2de6280"];
@@ -301,7 +321,7 @@
 - (void)adViewDidReceiveAd:(GADBannerView *)adView {
     [Flurry logEvent:@"AdViewDidReceiveAd"];
     NSLog(@"Ad %f", adView.bounds.size.height);
-
+    [self setSub:adView tagsTo:1];
     isAdDisplayed = true;
     
     [self.view addSubview:adView];
@@ -309,7 +329,8 @@
 
 -(void)adView:(GADBannerView *)adView didFailToReceiveAdWithError:(GADRequestError *)error{
     isAdDisplayed = false;
-    
+    [self setSub:adView tagsTo:1];
+
     NSLog(@"Should remove ad");
 }
 
@@ -328,7 +349,7 @@
 - (CGRect) propToRect: (CGRect)prop {
     CGRect viewSize = [[self view] frame];
     CGRect real = CGRectMake(prop.origin.x*viewSize.size.width, prop.origin.y*viewSize.size.height, prop.size.width*viewSize.size.width, prop.size.height*viewSize.size.height);
-    return real;
+    return CGRectIntegral(real);
 }
 
 @end

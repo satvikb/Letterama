@@ -76,7 +76,7 @@
 - (CGRect) propToRect: (CGRect)prop {
     CGRect viewSize = self.frame;
     CGRect real = CGRectMake(prop.origin.x*viewSize.size.width, prop.origin.y*viewSize.size.height, prop.size.width*viewSize.size.width, prop.size.height*viewSize.size.height);
-    return real;
+    return CGRectIntegral(real);
 }
 
 @end

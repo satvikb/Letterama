@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "DigitButton.h"
+#import "Button.h"
 
 @protocol GameViewDelegate;
 
