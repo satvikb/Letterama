@@ -27,9 +27,10 @@
     titleLabel = [[UILabel alloc] initWithFrame:[self propToRect:CGRectMake(0.05, 0.1, 0.9, 0.2)]];
     titleLabel.textAlignment = NSTextAlignmentCenter;
     titleLabel.text = @"letterama";
-    titleLabel.layer.borderWidth = [Storage getCurrentBorderWidth];
+    titleLabel.layer.borderWidth = 0;//[Storage getCurrentBorderWidth];
     titleLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:70]];
     titleLabel.adjustsFontSizeToFitWidth = true;
+    titleLabel.tag = 1;
     [self addSubview:titleLabel];
     
     highScoreLabel = [[UILabel alloc] initWithFrame:[self propToRect:CGRectMake(0.1, 0.3, 0.8, 0.1)]];

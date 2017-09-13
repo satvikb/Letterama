@@ -51,8 +51,9 @@
         mainLabel.textAlignment = NSTextAlignmentCenter;
         mainLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:20]];
         mainLabel.adjustsFontSizeToFitWidth = true;
-        
+        mainLabel.lineBreakMode = NSLineBreakByCharWrapping;
         [tutorialView addSubview:mainLabel];
+        [mainLabel sizeToFit];
         
         [self addSubview:tutorialView];
         
@@ -75,7 +76,7 @@
     scoreLabel = [[UILabel alloc] initWithFrame:[self propToRect:CGRectMake(0.05, 0.05, 0.9, 0.1)]];
     //    scoreLabel.layer.borderWidth = 1;
     scoreLabel.textAlignment = NSTextAlignmentCenter;
-    scoreLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:30]];
+    scoreLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:50]];
     scoreLabel.adjustsFontSizeToFitWidth = true;
     scoreLabel.text = @"0";
     scoreLabel.tag = 1;
@@ -83,7 +84,7 @@
 }
 
 -(void)createTimerBar {
-    timerBar = [[UIView alloc] initWithFrame:[self propToRect:CGRectMake(0, 0.3125, 1, 0.05)]];
+    timerBar = [[UIView alloc] initWithFrame:[self propToRect:CGRectMake(0, 0.31875, 1, 0.0375)]];
     timerBar.backgroundColor = UIColor.blackColor;
     [self addSubview:timerBar];
 }
@@ -102,7 +103,7 @@
         [tutorialView removeFromSuperview];
         [self startGame];
         [Storage setDidCompleteTutorial];
-    } text:@"done"];
+    } text:@"play"];
     [tutorialView addSubview:doneBtn];
 }
 
@@ -177,7 +178,8 @@
 
 -(void)gameOver{
     newHighScore = [self saveScore];
-
+    [Storage addToGamesPlayed];
+    
     [self.delegate gcReportScore:score];
 
     [self stopGameLoop];
@@ -187,7 +189,8 @@
 
 -(void)startGameLoop {
     gameTimer = [CADisplayLink displayLinkWithTarget:self selector:@selector(gameLoop:)];
-    if (@available(iOS 10.0, *)) {
+    
+    if(SYSTEM_VERSION_GREATER_THAN(@"10.0")) {
         gameTimer.preferredFramesPerSecond = 60;
     } else {
         // Fallback on earlier versions

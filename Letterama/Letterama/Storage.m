@@ -14,6 +14,8 @@
 static NSString* const fontId = @"font";
 static NSString* const borderId = @"border";
 static NSString* const tutorialId = @"tutorial";
+static NSString* const adsId = @"ads";
+static NSString* const currentGames = @"currentGames";
 
 +(bool)saveHighScore:(int)score{
     //    NSInteger* s = [NSInteger numberWithInt:score];
@@ -67,11 +69,41 @@ static NSString* const tutorialId = @"tutorial";
     [defaults setBool:true forKey:tutorialId];
 }
 
++(bool)setAdsState:(int)state{
+    //    NSInteger* s = [NSInteger numberWithInt:score];
+    NSNumber* s = [NSNumber numberWithInt:state];
+    [Lockbox archiveObject:s forKey:adsId];
+    return true;
+}
+
++(int)getAdsState {
+    NSNumber* currentAdState = [Lockbox unarchiveObjectForKey:adsId];
+    if(currentAdState == nil){
+        return 0;
+    }
+    return currentAdState.intValue;
+}
+
++(bool)addToGamesPlayed{
+    //    NSInteger* s = [NSInteger numberWithInt:score];
+    NSNumber* s = [NSNumber numberWithInt:([self getCurrentGamesPlayed]+1)];
+    [Lockbox archiveObject:s forKey:currentGames];
+    return true;
+}
+
++(int)getCurrentGamesPlayed {
+    NSNumber* currentGamesPlayed = [Lockbox unarchiveObjectForKey:currentGames];
+    if(currentGamesPlayed == nil){
+        return 0;
+    }
+    return currentGamesPlayed.intValue;
+}
+
 +(NSString*)getFontNameFromNumber:(int)number{
     switch (number) {
-        case 0:
-            return @"Pixel_3";
         case 1:
+            return @"Pixel_3";
+        case 0:
             return @"Helvetica";
         case 2:
             return @"Avenir";
@@ -82,7 +114,7 @@ static NSString* const tutorialId = @"tutorial";
         case 5:
             return @"Noteworthy";
         default:
-            return @"Pixel_3";
+            return @"Helvetica";
             break;
     }
 }

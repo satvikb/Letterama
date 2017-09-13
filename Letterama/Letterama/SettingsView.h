@@ -22,4 +22,6 @@
 -(void)switchAllFontsTo:(NSString*)fontName;
 -(void)switchAllBorderWidthTo:(int)borderWidth;
 -(void)switchFrom:(AppState)currentState to:(AppState)newState;
+-(void)initAds;
+-(void)removeAds;
 @end

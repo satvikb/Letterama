@@ -22,11 +22,12 @@
 -(instancetype)initWithFrame:(CGRect)frame score:(int)score newHighScore:(bool)newHighScore{
     self = [super initWithFrame:frame];
     
-    mainLabel = [[UILabel alloc] initWithFrame:[self propToRect:CGRectMake(0.05, 0.1, 0.9, 0.2)]];
+    mainLabel = [[UILabel alloc] initWithFrame:[self propToRect:CGRectMake(0.05, 0.1, 0.9, 0.15)]];
     mainLabel.textAlignment = NSTextAlignmentCenter;
     mainLabel.text = @"game over";
-    mainLabel.layer.borderWidth = [Storage getCurrentBorderWidth];
+//    mainLabel.layer.borderWidth = [Storage getCurrentBorderWidth];
     mainLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:40]];
+    mainLabel.tag = 1;
     [self addSubview:mainLabel];
     
     scoreLabel = [[UILabel alloc] initWithFrame:[self propToRect:CGRectMake(0.1, 0.3, 0.8, 0.1)]];

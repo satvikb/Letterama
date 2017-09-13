@@ -13,23 +13,33 @@
 @implementation GameCenterLeaderboardView {
     UIScrollView* scroll;
     Button* backButton;
+    
+    GKScore* localScore;
+    CGSize cellSize;
+    
+    UIView* localScoreView;
 }
 
--(instancetype)initWithFrame:(CGRect)frame scores:(NSArray*)scores{
+-(instancetype)initWithFrame:(CGRect)frame scores:(NSArray*)scores localPlayerScore:(GKScore*)localPlayerScore{
     self = [super initWithFrame:frame];
     self.backgroundColor = UIColor.whiteColor;
-    CGSize cellSize = [self propToRect:CGRectMake(0, 0, 1, 0.1)].size;
+    localScore = localPlayerScore;
+    
+    cellSize = [self propToRect:CGRectMake(0, 0, 1, 0.1)].size;
+    
+   
     
     scroll = [[UIScrollView alloc] initWithFrame:[self propToRect:CGRectMake(0, 0.125, 1, 0.875)]];
-    scroll.contentSize = CGSizeMake(frame.size.width, (scores.count+1)*cellSize.height);
+    
+    scroll.contentSize = CGSizeMake(frame.size.width, (scores.count)*cellSize.height);
 //    scroll.layer.borderWidth = 3;
     [self addSubview:scroll];
     
     for(int i = 0; i < scores.count; i++){
-        GKScore* score = [scores objectAtIndex:i];
+        GKScore* score = [scores objectAtIndex:i%scores.count];
         GKPlayer* player = score.player;
         
-        [self addScoreUnitScore:score withPlayer:player cellSize:cellSize i:i];
+        [self addScoreUnitScore:score withPlayer:player i:i];
     }
     
     backButton = [[Button alloc] initWithFrame:[self propToRect:CGRectMake(0.7, 0.05, 0.25, 0.075)] withBlock:^void{
@@ -38,10 +48,57 @@
     backButton.layer.borderWidth = [Storage getCurrentBorderWidth];
     [self addSubview:backButton];
     
+    UILabel* titleLabel = [[UILabel alloc] initWithFrame:CGRectIntegral([self propToRect:CGRectMake(0.05, 0.05, 0.6, 0.075)])];
+    titleLabel.text = @"leaderboard";
+    titleLabel.textAlignment = NSTextAlignmentLeft;
+//    titleLabel.layer.borderWidth = 2;
+    titleLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:40]];
+    titleLabel.adjustsFontSizeToFitWidth = true;
+    [self addSubview:titleLabel];
+    
+    
     return self;
 }
 
--(void)addScoreUnitScore:(GKScore*)score withPlayer:(GKPlayer*)player cellSize:(CGSize)cellSize i:(int)i{
+-(void)createLocalScore{
+    
+    CGFloat yOffset = 0;
+    if([self.delegate adDisplayed] == true){
+        yOffset = -[self.delegate bannerHeight];
+    }
+    
+    CGRect f = scroll.frame;
+    f.size = CGSizeMake(f.size.width, f.size.height-cellSize.height+yOffset);
+    scroll.frame = f;
+    
+    localScoreView = [[UIView alloc] initWithFrame:CGRectIntegral(CGRectMake(0, self.frame.size.height-cellSize.height+yOffset, cellSize.width, cellSize.height))];
+    localScoreView.layer.borderWidth = 2;
+    UILabel* rankLabel = [[UILabel alloc] initWithFrame:CGRectIntegral(CGRectMake(cellSize.width*0, cellSize.height*0, cellSize.width*0.2, cellSize.height))];
+    rankLabel.text = [NSString stringWithFormat:@"%li.", (long)localScore.rank];
+    rankLabel.textAlignment = NSTextAlignmentCenter;
+    rankLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:20]];
+    [localScoreView addSubview:rankLabel];
+    
+    UILabel* nameLabel = [[UILabel alloc] initWithFrame:CGRectIntegral(CGRectMake(cellSize.width*0.2, cellSize.height*0, cellSize.width*0.5, cellSize.height))];
+    nameLabel.text = [NSString stringWithFormat:@"%@", [GKLocalPlayer localPlayer].alias];
+    nameLabel.textAlignment = NSTextAlignmentLeft;
+    nameLabel.adjustsFontSizeToFitWidth = true;
+    nameLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:20]];
+    [localScoreView addSubview:nameLabel];
+    
+    UILabel* scoreLabel = [[UILabel alloc] initWithFrame:CGRectIntegral(CGRectMake(cellSize.width*0.7, cellSize.height*0, cellSize.width*0.3, cellSize.height))];
+    scoreLabel.text = [NSString stringWithFormat:@"%lli", localScore.value];
+    scoreLabel.textAlignment = NSTextAlignmentCenter;
+    scoreLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:40]];
+    scoreLabel.adjustsFontSizeToFitWidth = true;
+    //    scoreLabel.layer.borderWidth = [Storage getCurrentBorderWidth];
+    [localScoreView addSubview:scoreLabel];
+    
+    [self addSubview:localScoreView];
+    
+}
+
+-(void)addScoreUnitScore:(GKScore*)score withPlayer:(GKPlayer*)player i:(int)i{
     
     UIView* playerScoreUnit = [[UIView alloc] initWithFrame:CGRectIntegral(CGRectMake(0, cellSize.height*i, cellSize.width, cellSize.height))];
     UILabel* rankLabel = [[UILabel alloc] initWithFrame:CGRectIntegral(CGRectMake(cellSize.width*0, cellSize.height*0, cellSize.width*0.2, cellSize.height))];
@@ -66,6 +123,40 @@
     [playerScoreUnit addSubview:scoreLabel];
     
     [scroll addSubview:playerScoreUnit];
+}
+
+-(void)onAdDissapear {
+    CGFloat oldHeight = scroll.frame.size.height;
+    CGFloat newHeight = self.frame.size.height-cellSize.height-[self propToRect:CGRectMake(0, 0, 0, 0.125)].size.height;
+    
+    CGRect f = scroll.frame;
+    f.size = CGSizeMake(f.size.width, newHeight);
+    scroll.frame = f;
+    
+    CGRect l = localScoreView.frame;
+    l.origin.y = self.frame.size.height-(newHeight-oldHeight);
+    localScoreView.frame = l;
+    
+}
+
+-(void)onAdAppear {
+//    CGFloat oldHeight = scroll.frame.size.height;
+//    CGFloat newHeight = self.frame.size.height-cellSize.height;
+    
+    CGFloat yOffset = 0;
+    if([self.delegate adDisplayed] == true){
+        yOffset = -[self.delegate bannerHeight];
+    }
+    CGRect origScrollFrame = [self propToRect:CGRectMake(0, 0.125, 1, 0.875)];
+    
+    origScrollFrame.size.height = origScrollFrame.size.height-cellSize.height+yOffset;
+    scroll.frame = origScrollFrame;
+    
+    
+    CGRect l = CGRectIntegral(CGRectMake(0, self.frame.size.height-cellSize.height+yOffset, cellSize.width, cellSize.height));//localScoreView.frame;
+//    l.origin.y = //[self propToRect:CGRectMake(0, 0, 0, 0.125)].size.height+f.size.height+cellSize.height;//self.frame.size.height-cellSize.height+yOffset;
+    localScoreView.frame = l;
+    
 }
 
 - (CGRect) propToRect: (CGRect)prop {

@@ -22,6 +22,12 @@
 +(bool)getDidCompleteTutorial;
 +(void)setDidCompleteTutorial;
 
++(bool)setAdsState:(int)state;
++(int)getAdsState;
+
++(bool)addToGamesPlayed;
++(int)getCurrentGamesPlayed;
+
 +(NSString*)getFontNameFromNumber:(int)number;
 
 @end

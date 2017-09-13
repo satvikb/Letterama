@@ -21,6 +21,8 @@
     GameOverView* gameOverView;
     SettingsView* settingsView;
     GameCenterLeaderboardView* gameCenterLeaderboardView;
+    
+    bool loadingGCLeaderboard;
 }
 
 @property(nonatomic, strong) GADBannerView *bannerView;
@@ -58,7 +60,12 @@
    
 //    gameView = [self createGameView]
     
-    
+    if([Storage getAdsState] != 1){
+        [self initAds];
+    }
+}
+
+-(void)initAds{
     self.bannerView = [[GADBannerView alloc]
                        initWithAdSize:kGADAdSizeSmartBannerPortrait];
     self.bannerView.adUnitID = @"ca-app-pub-2889096611002538/5198583224";
@@ -74,10 +81,8 @@
                              @"2e8fb434d98fb223f735071df2de6280"];
     [self.bannerView loadRequest:request];
     [self setSub:self.bannerView tagsTo:1];
-
     
     self.interstitial = [self createAndLoadInterstitial];
-    
 }
 
 -(MenuView*)createMenuView{
@@ -109,10 +114,11 @@
     return settings;
 }
 
--(GameCenterLeaderboardView*)createGameCenterLeaderboardViewWithScores:(NSArray*)scores{
-    GameCenterLeaderboardView* leaderboard = [[GameCenterLeaderboardView alloc] initWithFrame:[self propToRect:CGRectMake(0, 0, 1, 1)] scores:scores];
+-(GameCenterLeaderboardView*)createGameCenterLeaderboardViewWithScores:(NSArray*)scores localScore:(GKScore*)localScore{
+    GameCenterLeaderboardView* leaderboard = [[GameCenterLeaderboardView alloc] initWithFrame:[self propToRect:CGRectMake(0, 0, 1, 1)] scores:scores localPlayerScore:localScore];
     leaderboard.delegate = self;
     leaderboard.layer.zPosition = 50;
+    [leaderboard createLocalScore];
     return leaderboard;
 }
 
@@ -150,13 +156,14 @@
 }
 
 -(void)showGCLeaderboard {
-    if(gameCenterEnabled == true){
+    if(gameCenterEnabled == true && loadingGCLeaderboard == false){
         GKLeaderboard* leaderboard = [[GKLeaderboard alloc] init];
         leaderboard.playerScope = GKLeaderboardPlayerScopeGlobal;
         leaderboard.identifier = GAMECENTER_LEADERBOARD_IDENTIFIER;
         leaderboard.range = NSMakeRange(1, 50);
         //    leaderboard.
         menuView.labelUnderScores.text = @"loading...";
+        loadingGCLeaderboard = true;
 //        [self showLabelUnderScores:@"loading..." time:10];
         [leaderboard loadScoresWithCompletionHandler:^(NSArray *scores, NSError *error){
             if(error){
@@ -167,12 +174,13 @@
                     NSLog(@"SCORE: %@ %lli", score.player.displayName, score.value);
                 }
                 
-                gameCenterLeaderboardView = [self createGameCenterLeaderboardViewWithScores:scores];
+                gameCenterLeaderboardView = [self createGameCenterLeaderboardViewWithScores:scores localScore:leaderboard.localPlayerScore];
                 [self.view addSubview:gameCenterLeaderboardView];
+                loadingGCLeaderboard = false;
             }
         }];
-    }else{
-        [self showLabelUnderScores:@"game center not authenticated" time:2];
+    }else if(gameCenterEnabled == false){
+        [self showLabelUnderScores:@"game center not active" time:2];
     }
 }
 
@@ -214,11 +222,13 @@
 
 -(void)changeViews:(UIView*)mainView borderTo:(int)border{
     for(UIView* subview in mainView.subviews){
-        if(subview.tag == 1){
+        if(subview.tag == 1 || [subview isKindOfClass:[GADBannerView class]]){
             subview.layer.borderWidth = 0;
         }else{
             subview.layer.borderWidth = border;
+//            NSLog(@"BORDER FOR %@ %li", [subview class], (long)subview.tag );
         }
+        
         [self changeViews:subview borderTo:border];
 
     }
@@ -228,7 +238,7 @@
     mainView.tag = tag;
     for(UIView* subview in mainView.subviews){
         subview.tag = tag;
-        
+//        NSLog(@"CLASS TAG %@", [subview class]);
         [self setSub:subview tagsTo:tag];
     }
 }
@@ -292,8 +302,10 @@
             [self.view addSubview:gameOverView];
             [Flurry endTimedEvent:@"game" withParameters:@{@"score":[NSNumber numberWithInt:score], @"newHighScore":[NSNumber numberWithBool:newHighScore]}];
             
-            if (self.interstitial.isReady) {
-                [self.interstitial presentFromRootViewController:self];
+            if([Storage getAdsState] != 1){
+                if (self.interstitial.isReady) {
+                    [self.interstitial presentFromRootViewController:self];
+                }
             }
             
             break;
@@ -308,6 +320,7 @@
 }
 
 - (GADInterstitial *)createAndLoadInterstitial {
+    
     GADInterstitial *interstitial = [[GADInterstitial alloc] initWithAdUnitID:@"ca-app-pub-2889096611002538/8183128773"];
     interstitial.delegate = self;
 //    interstitial.
@@ -319,31 +332,60 @@
 }
 
 - (void)adViewDidReceiveAd:(GADBannerView *)adView {
-    [Flurry logEvent:@"AdViewDidReceiveAd"];
-    NSLog(@"Ad %f", adView.bounds.size.height);
-    [self setSub:adView tagsTo:1];
-    isAdDisplayed = true;
-    
-    [self.view addSubview:adView];
+    if([Storage getAdsState] != 1){
+        [Flurry logEvent:@"AdViewDidReceiveAd"];
+        NSLog(@"Ad %f", adView.bounds.size.height);
+        
+        
+        [self.view addSubview:adView];
+        
+        [self setSub:adView tagsTo:1];
+        [self setSub:self.bannerView tagsTo:1];
+        isAdDisplayed = true;
+        
+        [gameCenterLeaderboardView onAdAppear];
+    }
 }
 
 -(void)adView:(GADBannerView *)adView didFailToReceiveAdWithError:(GADRequestError *)error{
     isAdDisplayed = false;
     [self setSub:adView tagsTo:1];
-
+    [self.bannerView removeFromSuperview];
+    [gameCenterLeaderboardView onAdDissapear];
     NSLog(@"Should remove ad");
 }
 
 -(void)interstitialDidDismissScreen:(GADInterstitial *)ad {
-    self.interstitial = [self createAndLoadInterstitial];
+    if([Storage getAdsState] != 1){
+        self.interstitial = [self createAndLoadInterstitial];
+    }
 }
 
 -(void)interstitialDidReceiveAd:(GADInterstitial *)ad {
-    [Flurry logEvent:@"Interstitial Receive Ad"];
+    if([Storage getAdsState] != 1){
+        [Flurry logEvent:@"Interstitial Receive Ad"];
+    }
 }
 
 -(void)interstitial:(GADInterstitial *)ad didFailToReceiveAdWithError:(GADRequestError *)error {
     [Flurry logEvent:@"Interstitial Fail Ad" withParameters:@{@"error":[error localizedDescription]}];
+}
+
+-(bool)adDisplayed {
+    return isAdDisplayed;
+}
+
+-(CGFloat)bannerHeight {
+    if(isAdDisplayed == true){
+        return self.bannerView.bounds.size.height;
+    }else{
+        return 0;
+    }
+}
+
+-(void)removeAds{
+    [self.bannerView removeFromSuperview];
+    isAdDisplayed = false;
 }
 
 - (CGRect) propToRect: (CGRect)prop {
