@@ -19,7 +19,7 @@
 
 @end
 
-
 @protocol GameOverViewDelegate <NSObject>
 -(void)switchFrom:(AppState)currentState to:(AppState)newState;
+-(void)childPresentViewController:(UIViewController *)viewControllerToPresent animated:(BOOL)flag completion:(void (^)(void))completion;
 @end

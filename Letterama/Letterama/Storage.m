@@ -18,7 +18,6 @@ static NSString* const adsId = @"ads";
 static NSString* const currentGames = @"currentGames";
 
 +(bool)saveHighScore:(int)score{
-    //    NSInteger* s = [NSInteger numberWithInt:score];
     int currentHighScore = [self getSavedHighScore];
     if(currentHighScore < score){
         NSNumber* s = [NSNumber numberWithInt:score];
@@ -69,8 +68,12 @@ static NSString* const currentGames = @"currentGames";
     [defaults setBool:true forKey:tutorialId];
 }
 
++(void)setDidNotCompleteTutorial{
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:false forKey:tutorialId];
+}
+
 +(bool)setAdsState:(int)state{
-    //    NSInteger* s = [NSInteger numberWithInt:score];
     NSNumber* s = [NSNumber numberWithInt:state];
     [Lockbox archiveObject:s forKey:adsId];
     return true;
@@ -85,7 +88,6 @@ static NSString* const currentGames = @"currentGames";
 }
 
 +(bool)addToGamesPlayed{
-    //    NSInteger* s = [NSInteger numberWithInt:score];
     NSNumber* s = [NSNumber numberWithInt:([self getCurrentGamesPlayed]+1)];
     [Lockbox archiveObject:s forKey:currentGames];
     return true;
@@ -112,7 +114,7 @@ static NSString* const currentGames = @"currentGames";
         case 4:
             return @"GillSans";
         case 5:
-            return @"Noteworthy";
+            return @"AmericanTypewriter";
         default:
             return @"Helvetica";
             break;

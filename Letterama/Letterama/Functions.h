@@ -14,6 +14,14 @@
 #define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
 #define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(v)     ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedDescending)
 
+#define DEFAULT_WIDTH 375
+
+#define GAMECENTER_LEADERBOARD_IDENTIFIER (@"wordscorrect")
+#define MAX_NUMBER_OF_LETTERS (9)
+
+#define NUMBER_OF_FONTS (6)
+#define MAX_BORDER_WIDTH (7)
+
 @interface Functions : NSObject
 
 typedef enum AppState {
@@ -25,5 +33,6 @@ typedef enum AppState {
 } AppState;
 
 +(CGFloat) fontSize:(CGFloat)fontSize;
++ (int)randomNumberBetween:(int)min maxNumber:(int)max;
 
 @end

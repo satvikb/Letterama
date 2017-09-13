@@ -27,12 +27,8 @@
     
     cellSize = [self propToRect:CGRectMake(0, 0, 1, 0.1)].size;
     
-   
-    
     scroll = [[UIScrollView alloc] initWithFrame:[self propToRect:CGRectMake(0, 0.125, 1, 0.875)]];
-    
     scroll.contentSize = CGSizeMake(frame.size.width, (scores.count)*cellSize.height);
-//    scroll.layer.borderWidth = 3;
     [self addSubview:scroll];
     
     for(int i = 0; i < scores.count; i++){
@@ -51,7 +47,6 @@
     UILabel* titleLabel = [[UILabel alloc] initWithFrame:CGRectIntegral([self propToRect:CGRectMake(0.05, 0.05, 0.6, 0.075)])];
     titleLabel.text = @"leaderboard";
     titleLabel.textAlignment = NSTextAlignmentLeft;
-//    titleLabel.layer.borderWidth = 2;
     titleLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:40]];
     titleLabel.adjustsFontSizeToFitWidth = true;
     [self addSubview:titleLabel];
@@ -91,7 +86,6 @@
     scoreLabel.textAlignment = NSTextAlignmentCenter;
     scoreLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:40]];
     scoreLabel.adjustsFontSizeToFitWidth = true;
-    //    scoreLabel.layer.borderWidth = [Storage getCurrentBorderWidth];
     [localScoreView addSubview:scoreLabel];
     
     [self addSubview:localScoreView];
@@ -119,7 +113,6 @@
     scoreLabel.textAlignment = NSTextAlignmentCenter;
     scoreLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:40]];
     scoreLabel.adjustsFontSizeToFitWidth = true;
-//    scoreLabel.layer.borderWidth = [Storage getCurrentBorderWidth];
     [playerScoreUnit addSubview:scoreLabel];
     
     [scroll addSubview:playerScoreUnit];
@@ -136,12 +129,9 @@
     CGRect l = localScoreView.frame;
     l.origin.y = self.frame.size.height-(newHeight-oldHeight);
     localScoreView.frame = l;
-    
 }
 
 -(void)onAdAppear {
-//    CGFloat oldHeight = scroll.frame.size.height;
-//    CGFloat newHeight = self.frame.size.height-cellSize.height;
     
     CGFloat yOffset = 0;
     if([self.delegate adDisplayed] == true){
@@ -152,9 +142,7 @@
     origScrollFrame.size.height = origScrollFrame.size.height-cellSize.height+yOffset;
     scroll.frame = origScrollFrame;
     
-    
-    CGRect l = CGRectIntegral(CGRectMake(0, self.frame.size.height-cellSize.height+yOffset, cellSize.width, cellSize.height));//localScoreView.frame;
-//    l.origin.y = //[self propToRect:CGRectMake(0, 0, 0, 0.125)].size.height+f.size.height+cellSize.height;//self.frame.size.height-cellSize.height+yOffset;
+    CGRect l = CGRectIntegral(CGRectMake(0, self.frame.size.height-cellSize.height+yOffset, cellSize.width, cellSize.height));
     localScoreView.frame = l;
     
 }

@@ -21,6 +21,7 @@
 
 +(bool)getDidCompleteTutorial;
 +(void)setDidCompleteTutorial;
++(void)setDidNotCompleteTutorial;
 
 +(bool)setAdsState:(int)state;
 +(int)getAdsState;

@@ -18,12 +18,13 @@
 @property (nonatomic, assign) int score;
 @property (nonatomic, assign) bool newHighScore;
 
--(instancetype)initWithFrame:(CGRect)frame andWords:(NSArray*)_words;
+-(instancetype)initWithFrame:(CGRect)frame andWords:(NSArray*)_words deleg:(id<GameViewDelegate>)deleg;
 
 @end
-
 
 @protocol GameViewDelegate <NSObject>
 -(void)switchFrom:(AppState)currentState to:(AppState)newState;
 -(void)gcReportScore:(int)s;
+-(NSString*)getRandomWordWithNumberOfLetters:(int)numOfLetters;
+
 @end

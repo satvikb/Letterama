@@ -21,6 +21,7 @@
     self.textLabel.text = text;
     self.textLabel.textAlignment = NSTextAlignmentCenter;
     self.textLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:30]];
+    self.textLabel.adjustsFontSizeToFitWidth = true;
     [self addSubview:self.textLabel];
     
     return self;

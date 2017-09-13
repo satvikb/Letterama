@@ -7,12 +7,11 @@
 //
 
 #import "ViewController.h"
-#define GAMECENTER_LEADERBOARD_IDENTIFIER (@"wordscorrect")
 #import "Flurry.h"
 @import GoogleMobileAds;
 
 @interface ViewController () <GADBannerViewDelegate, GADInterstitialDelegate> {
-    NSArray *words;
+    NSMutableArray *words;
     UILabel* mainWordLabel;
     NSString* currentWord;
     
@@ -39,35 +38,51 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     [self authenticateLocalPlayer];
-    
-    NSString* file = [[NSBundle mainBundle] pathForResource:@"words_alpha" ofType:@"txt"];
-//
-    NSString* fileContents = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
-//    NSString* sub = [fileContents substringToIndex:20];
-//    NSArray* lines3 = [sub componentsSeparatedByString:@"\n"];
-
-//    NSArray* lines2 = [fileContents componentsSeparatedByString:@"\n"];
-//    NSLog(@"WWWW %lu__%@__%lu", (unsigned long)[lines2 count], sub, lines3.count);
-    NSArray* lines = [fileContents componentsSeparatedByString:@"\n"];//@[@"test1", @"test2", @"test3"];
-    words = lines;
-    
-    /* initialize random seed: */
+    [self loadWords];
     srand ( (unsigned int)time(NULL) );
-    
     
     menuView = [self createMenuView];
     [self.view addSubview:menuView];
-   
-//    gameView = [self createGameView]
     
     if([Storage getAdsState] != 1){
         [self initAds];
     }
 }
 
+-(void)loadWords{
+    words = [[NSMutableArray alloc] init];
+    
+    for(int i = 1; i <= MAX_NUMBER_OF_LETTERS; i++){
+        
+        NSString* file = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"words_%i", i] ofType:@"txt"];
+        NSString* fileContents = [NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil];
+        NSArray* lines = [fileContents componentsSeparatedByString:@"\n"];
+        
+        NSMutableArray* letterArray = [[NSMutableArray alloc] initWithArray:lines];
+        [letterArray removeObject:@""];
+        [words addObject:letterArray];
+    }
+    
+}
+
+-(NSString*)getRandomWordWithNumberOfLetters:(int)numOfLetters{
+    int l = numOfLetters;
+    
+    if(numOfLetters <= 0 || numOfLetters > 9){
+        l = [Functions randomNumberBetween:1 maxNumber:9];
+    }
+    
+    NSMutableArray* letterArray = [words objectAtIndex:l-1];
+    int index = rand() % [letterArray count];
+    return [letterArray objectAtIndex:index];
+}
+
+-(NSMutableArray*)getWordList{
+    return words;
+}
+
 -(void)initAds{
-    self.bannerView = [[GADBannerView alloc]
-                       initWithAdSize:kGADAdSizeSmartBannerPortrait];
+    self.bannerView = [[GADBannerView alloc] initWithAdSize:kGADAdSizeSmartBannerPortrait];
     self.bannerView.adUnitID = @"ca-app-pub-2889096611002538/5198583224";
     CGRect screenBounds = [self propToRect:CGRectMake(0, 0, 1, 1)];
     [self.bannerView setFrame:CGRectIntegral(CGRectMake(0, 0, screenBounds.size.width, self.bannerView.bounds.size.height))];
@@ -76,10 +91,7 @@
     self.bannerView.delegate = self;
     self.bannerView.layer.zPosition = 200;
     self.bannerView.tag = 1;
-    GADRequest *request = [GADRequest request];
-    request.testDevices = @[ kGADSimulatorID,                       // All simulators
-                             @"2e8fb434d98fb223f735071df2de6280"];
-    [self.bannerView loadRequest:request];
+    [self.bannerView loadRequest:[GADRequest request]];
     [self setSub:self.bannerView tagsTo:1];
     
     self.interstitial = [self createAndLoadInterstitial];
@@ -93,7 +105,7 @@
 }
 
 -(GameView*)createGameView{
-    GameView* game = [[GameView alloc] initWithFrame:[self propToRect:CGRectMake(0, 0, 1, 1)] andWords:words];
+    GameView* game = [[GameView alloc] initWithFrame:[self propToRect:CGRectMake(0, 0, 1, 1)] andWords:words deleg:self];
     game.delegate = self;
     game.layer.zPosition = 30;
     return game;
@@ -122,7 +134,6 @@
     return leaderboard;
 }
 
-
 -(void)authenticateLocalPlayer{
     GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
     
@@ -150,7 +161,7 @@
                 NSLog(@"%@", [error localizedDescription]);
             }
             
-//            [Flurry logEvent:@"GameCenterReportScore" withParameters:@{@"score":[NSNumber numberWithInt:s]}];
+            [Flurry logEvent:@"GameCenterReportScore" withParameters:@{@"score":[NSNumber numberWithInt:s]}];
         }];
     }
 }
@@ -161,19 +172,14 @@
         leaderboard.playerScope = GKLeaderboardPlayerScopeGlobal;
         leaderboard.identifier = GAMECENTER_LEADERBOARD_IDENTIFIER;
         leaderboard.range = NSMakeRange(1, 50);
-        //    leaderboard.
         menuView.labelUnderScores.text = @"loading...";
         loadingGCLeaderboard = true;
-//        [self showLabelUnderScores:@"loading..." time:10];
+
         [leaderboard loadScoresWithCompletionHandler:^(NSArray *scores, NSError *error){
             if(error){
                 NSLog(@"Error retreiving scores %@", error);
                 [self showLabelUnderScores:@"failed to get scores" time:3];
             }else{
-                for(GKScore* score in scores){
-                    NSLog(@"SCORE: %@ %lli", score.player.displayName, score.value);
-                }
-                
                 gameCenterLeaderboardView = [self createGameCenterLeaderboardViewWithScores:scores localScore:leaderboard.localPlayerScore];
                 [self.view addSubview:gameCenterLeaderboardView];
                 loadingGCLeaderboard = false;
@@ -209,7 +215,6 @@
             UILabel* label = (UILabel*)subview;
             
             label.font = [UIFont fontWithName:font size: label.font.pointSize ];
-            
         }else{
             [self changeViewLabels:subview fontTo:font];
         }
@@ -226,11 +231,9 @@
             subview.layer.borderWidth = 0;
         }else{
             subview.layer.borderWidth = border;
-//            NSLog(@"BORDER FOR %@ %li", [subview class], (long)subview.tag );
         }
         
         [self changeViews:subview borderTo:border];
-
     }
 }
 
@@ -238,7 +241,6 @@
     mainView.tag = tag;
     for(UIView* subview in mainView.subviews){
         subview.tag = tag;
-//        NSLog(@"CLASS TAG %@", [subview class]);
         [self setSub:subview tagsTo:tag];
     }
 }
@@ -307,7 +309,6 @@
                     [self.interstitial presentFromRootViewController:self];
                 }
             }
-            
             break;
         case Settings:
             settingsView = [self createSettingsView];
@@ -320,14 +321,9 @@
 }
 
 - (GADInterstitial *)createAndLoadInterstitial {
-    
     GADInterstitial *interstitial = [[GADInterstitial alloc] initWithAdUnitID:@"ca-app-pub-2889096611002538/8183128773"];
     interstitial.delegate = self;
-//    interstitial.
-    GADRequest *interstitialRequest = [GADRequest request];
-    interstitialRequest.testDevices = @[ kGADSimulatorID,                       // All simulators
-                                         @"2e8fb434d98fb223f735071df2de6280"];
-    [interstitial loadRequest:interstitialRequest];
+    [interstitial loadRequest:[GADRequest request]];
     return interstitial;
 }
 
@@ -335,7 +331,6 @@
     if([Storage getAdsState] != 1){
         [Flurry logEvent:@"AdViewDidReceiveAd"];
         NSLog(@"Ad %f", adView.bounds.size.height);
-        
         
         [self.view addSubview:adView];
         
@@ -386,6 +381,10 @@
 -(void)removeAds{
     [self.bannerView removeFromSuperview];
     isAdDisplayed = false;
+}
+
+-(void)childPresentViewController:(UIViewController *)viewControllerToPresent animated:(BOOL)flag completion:(void (^)(void))completion{
+    [self presentViewController:viewControllerToPresent animated:flag completion:completion];
 }
 
 - (CGRect) propToRect: (CGRect)prop {

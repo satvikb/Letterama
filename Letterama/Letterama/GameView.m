@@ -21,12 +21,13 @@
     
     UIView* timerBar;
     
+    bool gameOverHappening;
 }
 
 @synthesize score;
 @synthesize newHighScore;
 
--(instancetype)initWithFrame:(CGRect)frame andWords:(NSArray*)_words{
+-(instancetype)initWithFrame:(CGRect)frame andWords:(NSArray*)_words deleg:(id<GameViewDelegate>)deleg{
     self = [super initWithFrame:frame];
     
     score = 0;
@@ -35,6 +36,7 @@
     timePerWord = 3;
     currentWord = 0;
     words = _words;
+    self.delegate = deleg;
     
    
     if([Storage getDidCompleteTutorial] == true){
@@ -45,13 +47,12 @@
         tutorialView.layer.borderWidth = 5;
         
         UILabel* mainLabel = [[UILabel alloc] initWithFrame:CGRectIntegral(CGRectMake(tutorialView.frame.size.width*0.05, tutorialView.frame.size.height*0.1, tutorialView.frame.size.width*0.9, tutorialView.frame.size.height*0.7))];
-        mainLabel.text = @"select the number that is equal to the amount of letters each word has";
-        mainLabel.numberOfLines = 3;
-//        mainLabel.layer.borderWidth = 2;
+        mainLabel.text = @"count the letters in each word, and pick the corresponding number";
+        mainLabel.numberOfLines = 5;
         mainLabel.textAlignment = NSTextAlignmentCenter;
         mainLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:20]];
         mainLabel.adjustsFontSizeToFitWidth = true;
-        mainLabel.lineBreakMode = NSLineBreakByCharWrapping;
+        mainLabel.lineBreakMode = NSLineBreakByWordWrapping;
         [tutorialView addSubview:mainLabel];
         [mainLabel sizeToFit];
         
@@ -68,13 +69,15 @@
     [self createMainWordLabel];
     [self createTimerBar];
     [self createNewWord];
-    [self startGameLoop];
     [self createAllDigitButtons];
+    
+    if([Storage getDidCompleteTutorial] == true){
+        [self startGameLoop];
+    }
 }
 
 -(void)createScoreLabel{
     scoreLabel = [[UILabel alloc] initWithFrame:[self propToRect:CGRectMake(0.05, 0.05, 0.9, 0.1)]];
-    //    scoreLabel.layer.borderWidth = 1;
     scoreLabel.textAlignment = NSTextAlignmentCenter;
     scoreLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:50]];
     scoreLabel.adjustsFontSizeToFitWidth = true;
@@ -95,26 +98,20 @@
     mainWordLabel.textAlignment = NSTextAlignmentCenter;
     mainWordLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:60]];
     mainWordLabel.adjustsFontSizeToFitWidth = true;
+    mainWordLabel.lineBreakMode = NSLineBreakByCharWrapping;
     [self addSubview:mainWordLabel];
 }
 
 -(void)showTutorialDissapearButton:(UIView*)tutorialView {
-    Button* doneBtn = [[Button alloc] initWithFrame:CGRectIntegral(CGRectMake(tutorialView.frame.size.width*0.1, tutorialView.frame.size.height-(tutorialView.frame.size.height*0.2), tutorialView.frame.size.width*0.8, tutorialView.frame.size.height*0.2)) withBlock:^void{
+    Button* doneBtn = [[Button alloc] initWithFrame:CGRectIntegral(CGRectMake(tutorialView.frame.size.width*0.1, tutorialView.frame.size.height-(tutorialView.frame.size.height*0.3), tutorialView.frame.size.width*0.8, tutorialView.frame.size.height*0.2)) withBlock:^void{
         [tutorialView removeFromSuperview];
         [self startGame];
-        [Storage setDidCompleteTutorial];
     } text:@"play"];
     [tutorialView addSubview:doneBtn];
 }
 
 -(void)createNewWord{
-    NSString *string = @"";
-    
-    while (string.length <= 0 || string.length > 9) {
-        int index = rand() % [words count];
-        string = [words objectAtIndex:index];
-//        NSLog(@"S %@", string);
-    }
+    NSString *string = [self.delegate getRandomWordWithNumberOfLetters:[Functions randomNumberBetween:1 maxNumber:9]];
     
     currentWord = string;
     mainWordLabel.text = string;
@@ -127,7 +124,9 @@
     
     [timerBar.layer removeAllAnimations];
     
-    [self startAnimatingBarDown];
+    if([Storage getDidCompleteTutorial] == true){
+        [self startAnimatingBarDown];
+    }
 }
 
 - (void)createAllDigitButtons{
@@ -139,7 +138,6 @@
             DigitButton* digitButton = [[DigitButton alloc] initWithFrame:[self propToRect:CGRectMake(0.075+(x*0.3), 0.375+(y*0.175), 0.25, 0.15)] digitId:i currentDigit:i withBlock:^(int digitId, int currentDigit){
                 
             }];
-            
             
             digitButton.layer.borderWidth = [Storage getCurrentBorderWidth];
             
@@ -158,14 +156,34 @@
 -(void)pressDigitButton:(DigitButton*)btn {
     if(btn.currentDigit == currentWord.length){
         NSLog(@"Correct");
-        score += 1;
-        scoreLabel.text = [NSString stringWithFormat:@"%i", score];
+        
+        if([Storage getDidCompleteTutorial] == true){
+            score += 1;
+            scoreLabel.text = [NSString stringWithFormat:@"%i", score];
+        }else{
+            [Storage setDidCompleteTutorial];
+        }
         
         [self createNewWord];
+        
+        btn.layer.borderColor = UIColor.greenColor.CGColor;
+        [self performSelector:@selector(resetBorder:) withObject:btn afterDelay:0.5];
     }else{
         NSLog(@"Wrong");
-        [self gameOver];
+        
+        btn.layer.borderColor = UIColor.redColor.CGColor;
+        timerBar.backgroundColor = UIColor.redColor;
+        [self performSelector:@selector(gameOverAndResetBorder:) withObject:btn afterDelay:0.5];
     }
+}
+
+-(void)resetBorder:(DigitButton*)btn{
+    btn.layer.borderColor = UIColor.blackColor.CGColor;
+}
+
+-(void)gameOverAndResetBorder:(DigitButton*)btn{
+    btn.layer.borderColor = UIColor.blackColor.CGColor;
+    [self gameOver];
 }
 
 -(bool)saveScore{
@@ -177,14 +195,17 @@
 }
 
 -(void)gameOver{
-    newHighScore = [self saveScore];
-    [Storage addToGamesPlayed];
     
-    [self.delegate gcReportScore:score];
-
-    [self stopGameLoop];
-    [self.delegate switchFrom:Game to:GameOver];
-
+    if(gameOverHappening == false){
+        newHighScore = [self saveScore];
+        [Storage addToGamesPlayed];
+        
+        [self.delegate gcReportScore:score];
+        
+        [self stopGameLoop];
+        [self.delegate switchFrom:Game to:GameOver];
+        gameOverHappening = true;
+    }
 }
 
 -(void)startGameLoop {

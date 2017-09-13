@@ -7,14 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4064A79A1F67AC2E002653CC /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4064A7991F67AC2E002653CC /* GameKit.framework */; };
+		4045B1DE1F692AEE00D241EE /* words_1.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4045B1DD1F6928A700D241EE /* words_1.txt */; };
+		4045B1DF1F692AEE00D241EE /* words_2.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4045B1D71F6928A700D241EE /* words_2.txt */; };
+		4045B1E01F692AEF00D241EE /* words_3.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4045B1D51F6928A700D241EE /* words_3.txt */; };
+		4045B1E11F692AEF00D241EE /* words_4.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4045B1D61F6928A700D241EE /* words_4.txt */; };
+		4045B1E21F692AEF00D241EE /* words_5.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4045B1D81F6928A700D241EE /* words_5.txt */; };
+		4045B1E31F692AEF00D241EE /* words_6.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4045B1DB1F6928A700D241EE /* words_6.txt */; };
+		4045B1E41F692AEF00D241EE /* words_7.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4045B1DC1F6928A700D241EE /* words_7.txt */; };
+		4045B1E51F692AEF00D241EE /* words_8.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4045B1D91F6928A700D241EE /* words_8.txt */; };
+		4045B1E61F692AEF00D241EE /* words_9.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4045B1DA1F6928A700D241EE /* words_9.txt */; };
+		40588EC71F6969CF000F42F3 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 40588EC61F6969CF000F42F3 /* GameKit.framework */; };
 		406F072F1F67453C00048F86 /* libFlurry_8.1.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 406F072E1F67453100048F86 /* libFlurry_8.1.0.a */; };
 		406F07311F67464900048F86 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 406F07301F67464900048F86 /* SystemConfiguration.framework */; };
 		406F07331F67464D00048F86 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 406F07321F67464D00048F86 /* Security.framework */; };
 		406F07351F67535400048F86 /* GoogleMobileAds.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 406F07341F67535100048F86 /* GoogleMobileAds.framework */; };
 		409A2D3C1F664F9300558127 /* DigitButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 409A2D3B1F664F9300558127 /* DigitButton.m */; };
 		409A2D411F665AEA00558127 /* Functions.m in Sources */ = {isa = PBXBuildFile; fileRef = 409A2D401F665AEA00558127 /* Functions.m */; };
-		409A2D421F665D5200558127 /* words_alpha.txt in Resources */ = {isa = PBXBuildFile; fileRef = 409A2D391F664F4000558127 /* words_alpha.txt */; };
 		409A2D441F665E5A00558127 /* Pixel_3.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 409A2D431F665E5600558127 /* Pixel_3.ttf */; };
 		409A2D471F66EAEB00558127 /* GameView.m in Sources */ = {isa = PBXBuildFile; fileRef = 409A2D461F66EAEB00558127 /* GameView.m */; };
 		409A2D4A1F66EF5D00558127 /* MenuView.m in Sources */ = {isa = PBXBuildFile; fileRef = 409A2D491F66EF5D00558127 /* MenuView.m */; };
@@ -33,14 +41,22 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		4064A7991F67AC2E002653CC /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
+		4045B1D51F6928A700D241EE /* words_3.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = words_3.txt; sourceTree = "<group>"; };
+		4045B1D61F6928A700D241EE /* words_4.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = words_4.txt; sourceTree = "<group>"; };
+		4045B1D71F6928A700D241EE /* words_2.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = words_2.txt; sourceTree = "<group>"; };
+		4045B1D81F6928A700D241EE /* words_5.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = words_5.txt; sourceTree = "<group>"; };
+		4045B1D91F6928A700D241EE /* words_8.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = words_8.txt; sourceTree = "<group>"; };
+		4045B1DA1F6928A700D241EE /* words_9.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = words_9.txt; sourceTree = "<group>"; };
+		4045B1DB1F6928A700D241EE /* words_6.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = words_6.txt; sourceTree = "<group>"; };
+		4045B1DC1F6928A700D241EE /* words_7.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = words_7.txt; sourceTree = "<group>"; };
+		4045B1DD1F6928A700D241EE /* words_1.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = words_1.txt; sourceTree = "<group>"; };
+		40588EC61F6969CF000F42F3 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		406F072C1F67453100048F86 /* Flurry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Flurry.h; sourceTree = "<group>"; };
 		406F072D1F67453100048F86 /* FlurrySessionBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FlurrySessionBuilder.h; sourceTree = "<group>"; };
 		406F072E1F67453100048F86 /* libFlurry_8.1.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry_8.1.0.a; sourceTree = "<group>"; };
 		406F07301F67464900048F86 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		406F07321F67464D00048F86 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		406F07341F67535100048F86 /* GoogleMobileAds.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMobileAds.framework; sourceTree = "<group>"; };
-		409A2D391F664F4000558127 /* words_alpha.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = words_alpha.txt; sourceTree = "<group>"; };
 		409A2D3A1F664F9300558127 /* DigitButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DigitButton.h; sourceTree = "<group>"; };
 		409A2D3B1F664F9300558127 /* DigitButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DigitButton.m; sourceTree = "<group>"; };
 		409A2D3F1F665AEA00558127 /* Functions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Functions.h; sourceTree = "<group>"; };
@@ -83,13 +99,29 @@
 				406F07331F67464D00048F86 /* Security.framework in Frameworks */,
 				406F07311F67464900048F86 /* SystemConfiguration.framework in Frameworks */,
 				406F072F1F67453C00048F86 /* libFlurry_8.1.0.a in Frameworks */,
-				4064A79A1F67AC2E002653CC /* GameKit.framework in Frameworks */,
+				40588EC71F6969CF000F42F3 /* GameKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4045B1D41F69289800D241EE /* Words */ = {
+			isa = PBXGroup;
+			children = (
+				4045B1DD1F6928A700D241EE /* words_1.txt */,
+				4045B1D71F6928A700D241EE /* words_2.txt */,
+				4045B1D51F6928A700D241EE /* words_3.txt */,
+				4045B1D61F6928A700D241EE /* words_4.txt */,
+				4045B1D81F6928A700D241EE /* words_5.txt */,
+				4045B1DB1F6928A700D241EE /* words_6.txt */,
+				4045B1DC1F6928A700D241EE /* words_7.txt */,
+				4045B1D91F6928A700D241EE /* words_8.txt */,
+				4045B1DA1F6928A700D241EE /* words_9.txt */,
+			);
+			path = Words;
+			sourceTree = "<group>";
+		};
 		406F072B1F67453100048F86 /* Flurry */ = {
 			isa = PBXGroup;
 			children = (
@@ -103,7 +135,7 @@
 		409A2D5A1F671DB800558127 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				4064A7991F67AC2E002653CC /* GameKit.framework */,
+				40588EC61F6969CF000F42F3 /* GameKit.framework */,
 				406F07341F67535100048F86 /* GoogleMobileAds.framework */,
 				406F07321F67464D00048F86 /* Security.framework */,
 				406F07301F67464900048F86 /* SystemConfiguration.framework */,
@@ -131,6 +163,7 @@
 		40FE74A21F664CDB00D1D9DA /* Letterama */ = {
 			isa = PBXGroup;
 			children = (
+				4045B1D41F69289800D241EE /* Words */,
 				40FE74A31F664CDB00D1D9DA /* AppDelegate.h */,
 				40FE74A41F664CDB00D1D9DA /* AppDelegate.m */,
 				40FE74A61F664CDB00D1D9DA /* ViewController.h */,
@@ -140,7 +173,6 @@
 				40FE74AE1F664CDB00D1D9DA /* LaunchScreen.storyboard */,
 				40FE74B11F664CDB00D1D9DA /* Info.plist */,
 				40FE74B21F664CDB00D1D9DA /* main.m */,
-				409A2D391F664F4000558127 /* words_alpha.txt */,
 				409A2D3A1F664F9300558127 /* DigitButton.h */,
 				409A2D3B1F664F9300558127 /* DigitButton.m */,
 				409A2D3F1F665AEA00558127 /* Functions.h */,
@@ -229,7 +261,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				409A2D421F665D5200558127 /* words_alpha.txt in Resources */,
+				4045B1DE1F692AEE00D241EE /* words_1.txt in Resources */,
+				4045B1DF1F692AEE00D241EE /* words_2.txt in Resources */,
+				4045B1E01F692AEF00D241EE /* words_3.txt in Resources */,
+				4045B1E11F692AEF00D241EE /* words_4.txt in Resources */,
+				4045B1E21F692AEF00D241EE /* words_5.txt in Resources */,
+				4045B1E31F692AEF00D241EE /* words_6.txt in Resources */,
+				4045B1E41F692AEF00D241EE /* words_7.txt in Resources */,
+				4045B1E51F692AEF00D241EE /* words_8.txt in Resources */,
+				4045B1E61F692AEF00D241EE /* words_9.txt in Resources */,
 				409A2D441F665E5A00558127 /* Pixel_3.ttf in Resources */,
 				40FE74B01F664CDB00D1D9DA /* LaunchScreen.storyboard in Resources */,
 				40FE74AD1F664CDB00D1D9DA /* Assets.xcassets in Resources */,

@@ -12,7 +12,7 @@
 
 @protocol SettingsViewDelegate;
 
-@interface SettingsView : UIView
+@interface SettingsView : UIView <UITextViewDelegate>
 
 @property (nonatomic, strong) id<SettingsViewDelegate> delegate;
 
@@ -24,4 +24,5 @@
 -(void)switchFrom:(AppState)currentState to:(AppState)newState;
 -(void)initAds;
 -(void)removeAds;
+-(NSMutableArray*)getWordList;
 @end

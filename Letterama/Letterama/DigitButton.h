@@ -12,7 +12,6 @@ typedef void (^ButtonPressDown)(int digitId, int currentDigit);
 
 @interface DigitButton : UIView
 
-
 @property (nonatomic, copy) ButtonPressDown block;
 @property (nonatomic, assign) int digitId;
 @property (nonatomic, assign) int currentDigit;

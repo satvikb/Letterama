@@ -17,10 +17,14 @@
     Button* replayButton;
     Button* shareButton;
     Button* menuButton;
+    
+    int score;
 }
 
--(instancetype)initWithFrame:(CGRect)frame score:(int)score newHighScore:(bool)newHighScore{
+-(instancetype)initWithFrame:(CGRect)frame score:(int)_score newHighScore:(bool)newHighScore{
     self = [super initWithFrame:frame];
+    
+    score = _score;
     
     mainLabel = [[UILabel alloc] initWithFrame:[self propToRect:CGRectMake(0.05, 0.1, 0.9, 0.15)]];
     mainLabel.textAlignment = NSTextAlignmentCenter;
@@ -33,7 +37,6 @@
     scoreLabel = [[UILabel alloc] initWithFrame:[self propToRect:CGRectMake(0.1, 0.3, 0.8, 0.1)]];
     scoreLabel.textAlignment = NSTextAlignmentCenter;
     scoreLabel.text = [NSString stringWithFormat:@"score: %i", score];
-//    scoreLabel.layer.borderWidth = 3;
     scoreLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:40]];
     scoreLabel.tag = 1;
     [self addSubview:scoreLabel];
@@ -41,11 +44,9 @@
     newHighScoreLabel = [[UILabel alloc] initWithFrame:[self propToRect:CGRectMake(0.1, 0.4, 0.8, 0.075)]];
     newHighScoreLabel.textAlignment = NSTextAlignmentCenter;
     newHighScoreLabel.text = newHighScore == true ? @"new high score!" : @"";
-    //    scoreLabel.layer.borderWidth = 3;
     newHighScoreLabel.font = [UIFont fontWithName:[Storage getFontNameFromNumber:[Storage getCurrentFont]] size:[Functions fontSize:30]];
     newHighScoreLabel.adjustsFontSizeToFitWidth = true;
     [self addSubview:newHighScoreLabel];
-    
     
     replayButton = [[Button alloc] initWithFrame:[self propToRect:CGRectMake(0.05, 0.5, 0.9, 0.1)] withBlock:^{
         [self.delegate switchFrom:GameOver to:Game];
@@ -54,7 +55,7 @@
     [self addSubview:replayButton];
     
     shareButton = [[Button alloc] initWithFrame:[self propToRect:CGRectMake(0.05, 0.65, 0.9, 0.1)] withBlock:^{
-
+        [self shareSheet];
     } text:@"share"];
     shareButton.layer.borderWidth = [Storage getCurrentBorderWidth];
     [self addSubview:shareButton];
@@ -66,6 +67,31 @@
     [self addSubview:menuButton];
     
     return self;
+}
+
+-(void)shareSheet {
+    NSString *textToShare = [NSString stringWithFormat:@"i just got %i in letterama", score];
+    NSURL *myWebsite = [NSURL URLWithString:@"http://apple.co/2h364qa"];
+    
+    NSArray *objectsToShare = @[textToShare, myWebsite];
+    
+    UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:objectsToShare applicationActivities:nil];
+    
+    NSArray *excludeActivities = @[UIActivityTypeAirDrop,
+                                   UIActivityTypePrint,
+                                   UIActivityTypeAssignToContact,
+                                   UIActivityTypeSaveToCameraRoll,
+                                   UIActivityTypeAddToReadingList,
+                                   UIActivityTypePostToFlickr,
+                                   UIActivityTypePostToVimeo,
+                                   @"com.apple.mobilenotes.SharingExtension",
+                                   @"com.apple.reminders.RemindersEditorExtension",
+                                   @"com.google.Drive.ShareExtension"
+                                   ];
+    
+    activityVC.excludedActivityTypes = excludeActivities;
+
+    [self.delegate childPresentViewController:activityVC animated:YES completion:nil];
 }
 
 - (CGRect) propToRect: (CGRect)prop {
